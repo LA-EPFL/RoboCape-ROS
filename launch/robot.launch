@@ -1,0 +1,4 @@
+<launch>
+  <node name="imu" pkg="robot_arena_ros" type="imu.py" respawn="true" output="screen" ns="robot_1" />
+</launch>
+

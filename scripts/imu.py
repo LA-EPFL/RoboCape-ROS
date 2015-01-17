@@ -2,9 +2,7 @@
 # Filename: robot_handler.py
 # Author: Salah-Eddine Missri - missrisalaheddine@gmail.com
 #
-# ROS node example that
-# - publishes sensors data to a ROS topic
-# - subscribes to velocity commands and executes them on actuators
+# ROS node example that publishes IMU data to a ROS topic
 
 import rospy
 import ravlib.sensors as sensors
