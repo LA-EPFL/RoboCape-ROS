@@ -34,7 +34,7 @@ def talker():
 
         # Write GPS data
         gps_data_msg.status.status = fix
-        gps_data_msg.status.service = SERVICE_GPS
+        gps_data_msg.status.service = gps_data_msg.status.SERVICE_GPS
         gps_data_msg.latitude = lat
         gps_data_msg.longitude = lon
         gps_data_msg.altitude = alt
@@ -43,7 +43,8 @@ def talker():
         gps_data_msg.position_covariance = [3.0**2, 0.0, 0.0, \
                                             0.0, 3.0**2, 0.0, \
                                             0.0, 0.0, 4.5**2]
-        gps_data_msg.position_covariance_type = COVARIANCE_TYPE_DIAGONAL_KNOWN
+        gps_data_msg.position_covariance_type = \
+            gps_data_msg.COVARIANCE_TYPE_DIAGONAL_KNOWN
 
         # Publish
         gps_data_pub.publish(gps_data_msg)
