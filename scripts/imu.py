@@ -1,5 +1,5 @@
 #!/usr/bin/env python
-# Filename: robot_handler.py
+# Filename: imu.py
 # Author: Salah-Eddine Missri - missrisalaheddine@gmail.com
 #
 # ROS node example that publishes IMU data to a ROS topic
@@ -16,9 +16,9 @@ def talker():
     print "IMU: Check."
 
     # Initialise publisher
-    imu_pub = rospy.Publisher('imu', sensor_msgs.Imu, queue_size=10)
+    imu_pub = rospy.Publisher('imu', sensor_msgs.Imu, queue_size=25)
     rospy.init_node('imu_stream', anonymous=True)
-    rate = rospy.Rate(100) # 10hz
+    rate = rospy.Rate(100) # 100hz
 
     # Infinite loop of reading & publishing
     while not rospy.is_shutdown():
