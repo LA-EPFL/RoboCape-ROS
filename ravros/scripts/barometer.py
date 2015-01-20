@@ -45,7 +45,7 @@ def talker():
         barometer_msg.temperature = temperature
         barometer_msg.temperature_variance = -1 # No info
 
-        #rospy.loginfo("Vector published")
+        # Publish
         barometer_pub.publish(barometer_msg)
         rate.sleep()
 

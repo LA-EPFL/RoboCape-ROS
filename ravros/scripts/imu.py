@@ -58,7 +58,7 @@ def talker():
                                           0.0, 0.0, 0.0, \
                                           0.0, 0.0, 0.0]
 
-        #rospy.loginfo("Vector published")
+        # Publish
         imu_pub.publish(imu_msg)
         rate.sleep()
 

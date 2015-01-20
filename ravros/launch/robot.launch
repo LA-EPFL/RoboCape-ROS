@@ -1,4 +1,5 @@
 <launch>
-  <node name="imu" pkg="robot_arena_ros" type="imu.py" respawn="true" output="screen" ns="robot_1" />
+  <node name="imu" pkg="ravros" type="imu.py" respawn="true" output="screen" ns="robot_1" />
+  <node name="gps" pkg="ravros" type="gps.py" respawn="true" output="screen" ns="robot_1" />
 </launch>
 
