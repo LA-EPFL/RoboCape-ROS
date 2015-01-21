@@ -13,6 +13,6 @@
         type="gps.py"
         respawn="true"
         args="9600 1"
-        ns="$(arg robot_ns" />
+        ns="$(arg robot_ns)" />
 </launch>
 
