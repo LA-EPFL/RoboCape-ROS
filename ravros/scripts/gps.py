@@ -4,6 +4,7 @@
 #
 # ROS node example that publishes GPS data to a ROS topic
 
+import argparse
 import rospy
 import ravlib.sensors as sensors
 import sensor_msgs.msg as sensor_msgs
