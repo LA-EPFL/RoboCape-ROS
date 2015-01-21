@@ -1,24 +1,8 @@
 <launch>
   <arg name="robot_ns" />
 
-  <node name="imu"
-        pkg="ravros"
-        type="imu.py"
-        respawn="true"
-        args="0x68 100"
-        ns="$(arg robot_ns)" />
+  <include file="$(find ravros)/launch/robot.launch" />
 
-  <node name="gps"
-        pkg="ravros"
-        type="gps.py"
-        respawn="true"
-        args="9600 1"
-        ns="$(arg robot_ns)" />
-
-  <node name="barometer"
-        pkg="ravros"
-        type="barometer.py"
-        respawn="true"
-        args="0x5d 1"
-        ns="$(arg robot_ns)" />
+  <include file="$(find webcam_stream)/launch/stream.launch"
+           ns ="$(arg robot_ns)" />
 </launch>
