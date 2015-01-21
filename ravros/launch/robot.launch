@@ -3,21 +3,21 @@
 
   <node name="imu"
         pkg="ravros"
-        type="imu.py"
+        type="imu"
         respawn="true"
         args="0x68 100"
         ns="$(arg robot_ns)" />
 
   <node name="gps"
         pkg="ravros"
-        type="gps.py"
+        type="gps"
         respawn="true"
         args="9600 1"
         ns="$(arg robot_ns)" />
 
   <node name="barometer"
         pkg="ravros"
-        type="barometer.py"
+        type="barometer"
         respawn="true"
         args="0x5d 1"
         ns="$(arg robot_ns)" />

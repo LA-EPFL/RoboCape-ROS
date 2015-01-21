@@ -5,6 +5,7 @@
 # ROS node that drives a car by listening to command signals
 
 import rospy
+import ravlib.actuators as actuators
 from geometry_msgs.msg import Twist
 
 def callback(data):
