@@ -17,7 +17,7 @@ def talker(barometer_addr, update_rate):
     print "Barometer: Check."
 
     # Initialise publisher
-    barometer_pub = rospy.Publisher('barometer', queue_size=1)
+    barometer_pub = rospy.Publisher('barometer', rav_msgs.Barometer, queue_size=1)
     rospy.init_node('barometer_stream', anonymous=True)
     rate = rospy.Rate(update_rate)
 
