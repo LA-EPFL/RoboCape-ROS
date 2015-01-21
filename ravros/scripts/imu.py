@@ -4,21 +4,21 @@
 #
 # ROS node example that publishes IMU data to a ROS topic
 
+import argparse
 import rospy
 import ravlib.sensors as sensors
 import sensor_msgs.msg as sensor_msgs
 
-def talker():
+def talker(imu_addr, update_rate):
     # Initialise sensor
-    MPU9150_I2C_ADDRESS = 0x68
-    imu = sensors.Imu(address=MPU9150_I2C_ADDRESS)
+    imu = sensors.Imu(address=imu_addr)
     imu.display_imu()
     print "IMU: Check."
 
     # Initialise publisher
     imu_pub = rospy.Publisher('imu', sensor_msgs.Imu, queue_size=25)
     rospy.init_node('imu_stream', anonymous=True)
-    rate = rospy.Rate(100) # 100hz
+    rate = rospy.Rate(update_rate)
 
     # Infinite loop of reading & publishing
     while not rospy.is_shutdown():
@@ -63,8 +63,19 @@ def talker():
         rate.sleep()
 
 if __name__ == '__main__':
+    # Parse arguments
+    parser = argparse.ArgumentParser(description='ROS node that publishes IMU \
+                                     data to a ROS topic')
+    parser.add_argument('imu_addr', metavar='addr', type=str, default='0x68', \
+                        help='IMU address on I2C bus')
+    parser.add_argument('update_rate', metavar='rate', type=int, default=100, \
+                        help='Update rate (Hz)')
+    args, unknown = parser.parse_known_args()
+    imu_addr = int(args.imu_addr, 0) # Get hex from string
+    update_rate = args.update_rate
+
+    # Launch publisher
     try:
-        talker()
+        talker(imu_addr, update_rate)
     except rospy.ROSInterruptException:
         pass
-

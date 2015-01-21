@@ -8,16 +8,16 @@ import rospy
 import ravlib.sensors as sensors
 import sensor_msgs.msg as sensor_msgs
 
-def talker():
+def talker(update_rate, baudrate):
     # Initialise sensor
-    gps = sensors.Gps(channel=sensors.UART_1, update_rate=1, baudrate=9600)
+    gps = sensors.Gps(channel=sensors.UART_1, update_rate=update_rate, baudrate=baudrate)
     gps.display_gps()
     print "GPS: Check."
 
     # Initialise publisher
     gps_data_pub = rospy.Publisher('gps', sensor_msgs.NavSatFix, queue_size=5)
     rospy.init_node('gps_stream', anonymous=True)
-    rate = rospy.Rate(1) # 1hz
+    rate = rospy.Rate(update_rate) # 1hz
 
     # Infinite loop of reading & publishing
     while not rospy.is_shutdown():
@@ -51,7 +51,19 @@ def talker():
         rate.sleep()
 
 if __name__ == '__main__':
+    # Parse arguments
+    parser = argparse.ArgumentParser(description='ROS node that publishes GPS \
+                                     data to a ROS topic')
+    parser.add_argument('baudrate', metavar='baud', type=int, default=9600, \
+                        help='Baud rate (bauds)')
+    parser.add_argument('update_rate', metavar='rate', type=int, default=1, \
+                        help='Update rate (Hz)')
+    args, unknown = parser.parse_known_args()
+    update_rate = args.update_rate
+    baudrate = args.baudrate
+
+    # Launch publisher
     try:
-        talker()
+        talker(update_rate, baudrate)
     except rospy.ROSInterruptException:
         pass

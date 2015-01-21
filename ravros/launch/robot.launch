@@ -1,5 +1,17 @@
 <launch>
-  <node name="imu" pkg="ravros" type="imu.py" respawn="true" output="screen" ns="robot_1" />
-  <node name="gps" pkg="ravros" type="gps.py" respawn="true" output="screen" ns="robot_1" />
+  <arg name="robot_ns" />
+
+  <node name="imu"
+        pkg="ravros"
+        type="imu.py"
+        respawn="true"
+        args="0x68 100"
+        ns="$(arg robot_ns)" />
+  <node name="gps"
+        pkg="ravros"
+        type="gps.py"
+        respawn="true"
+        args="9600 1"
+        ns="$(arg robot_ns" />
 </launch>
 
