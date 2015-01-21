@@ -1,0 +1,18 @@
+<package>
+  <description brief="webcam_stream">
+
+     webcam_stream
+
+  </description>
+  <author>Demo User</author>
+  <license>BSD</license>
+  <review status="unreviewed" notes=""/>
+  <url>http://ros.org/wiki/webcam_stream</url>
+  <depend package="sensor_msgs"/>
+  <depend package="cv_bridge"/>
+  <depend package="rospy"/>
+  <depend package="std_msgs"/>
+
+</package>
+
+
