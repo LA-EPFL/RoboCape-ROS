@@ -1,0 +1,9 @@
+<launch>
+  <arg name="robot_ns" />
+
+ <include file="$(find ravros)/launch/robot.launch" />
+
+  <include file="$(find webcam_stream)/launch/stream.launch"
+           ns ="$(arg robot_ns)" />
+</launch>
+
