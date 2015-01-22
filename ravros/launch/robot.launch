@@ -21,5 +21,11 @@
         respawn="true"
         args="0x5d 1"
         ns="$(arg robot_ns)" />
+
+  <node name="car_driver"
+        pkg="ravros"
+        type="car_driver"
+        respawn="true"
+        ns="$(arg robot_ns)" />
 </launch>
 
