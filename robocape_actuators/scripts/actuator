@@ -1,0 +1,29 @@
+#!/usr/bin/env python
+import sys
+import rospy
+from std_msgs.msg import Float64
+
+def actuator_init(name):
+    pass
+
+def actuator_callback(data):
+    rospy.loginfo(rospy.get_caller_id() + "I heard %.2f", data.data)
+
+def actuator_handler(name):
+    node_name = 'actuator_{}_handler'.format(name)
+    rospy.init_node(node_name)
+    actuator_init(name)
+
+    topic_name = 'actuator_{}_update'.format(name)
+    rospy.Subscriber(topic_name, Float64, actuator_callback)
+
+    rospy.spin()
+
+if __name__ == '__main__':
+    if len(sys.argv) < 2:
+        print("usage: actuator actuator_name")
+    else:
+        try:
+            actuator_handler(sys.argv[1])
+        except rospy.ROSInterruptException:
+            pass
