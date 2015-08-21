@@ -3,27 +3,36 @@ import sys
 import rospy
 from std_msgs.msg import Float64
 
-def actuator_init(name):
-    pass
+class ActuatorHandler:
+    def __init__(self, name):
+        self.name = name
+        node_name = 'actuator_{}_handler'.format(self.name)
+        rospy.init_node(node_name)
 
-def actuator_callback(data):
-    rospy.loginfo(rospy.get_caller_id() + "I heard %.2f", data.data)
+        # Get all parameters from config (rosparam)
+        self.output_pin = rospy.get_param(name + '/output_pin', 1)
+        self.board_pin = rospy.get_param(name + '/board_pin', 13)
+        self.frequency = rospy.get_param(name + '/frequency', 50)
+        self.duty_min = rospy.get_param(name + '/duty/min', 0.05)
+        self.duty_max = rospy.get_param(name + '/duty/max', 0.10)
+        self.output_min = rospy.get_param(name + '/output/min', -1.0)
+        self.output_max = rospy.get_param(name + '/output/max', 1.0)
 
-def actuator_handler(name):
-    node_name = 'actuator_{}_handler'.format(name)
-    rospy.init_node(node_name)
-    actuator_init(name)
+    def subscribe(self):
+        topic_name = 'actuator_{}_update'.format(self.name)
+        rospy.Subscriber(topic_name, Float64, self.callback)
 
-    topic_name = 'actuator_{}_update'.format(name)
-    rospy.Subscriber(topic_name, Float64, actuator_callback)
+        rospy.spin()
 
-    rospy.spin()
+    def callback(self, msg):
+        rospy.loginfo(rospy.get_caller_id() + "I heard %.2f", data.data)
 
 if __name__ == '__main__':
     if len(sys.argv) < 2:
         print("usage: actuator actuator_name")
     else:
         try:
-            actuator_handler(sys.argv[1])
+            actuator = ActuatorHandler(sys.argv[1])
+            actuator.subscribe()
         except rospy.ROSInterruptException:
             pass
