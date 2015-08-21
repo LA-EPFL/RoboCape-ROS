@@ -1,0 +1,24 @@
+<launch>
+  <!-- Initialise parameter server -->
+  <rosparam command="load"
+            file="$(find robocape_bringup)/config/hovercraft_actuators.yaml"
+            ns="hovercraft"
+  />
+
+  <!-- Actuator handler nodes -->
+  <node name="actuator_hover_handler"
+        pkg="robocape_actuators"
+        type="actuator"
+        args="hover"
+        ns="hovercraft"
+        respawn="true"
+  />
+  <node name="actuator_rudder_handler"
+        pkg="robocape_actuators"
+        type="actuator"
+        args="rudder"
+        ns="hovercraft"
+        respawn="true"
+  />
+
+</launch>
