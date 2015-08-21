@@ -47,13 +47,13 @@ class ActuatorHandler:
         rospy.loginfo(rospy.get_caller_id() + 'Initialising {} node'.format(node_name))
 
         # Get all parameters from config (rosparam)
-        output_pin = int(rospy.get_param('/actuators/' + name + '/output_pin', 1))
-        board_pin = int(rospy.get_param('/actuators/' + name + '/board_pin', 13))
-        period_us = int(1e6 / float(rospy.get_param('/actuators/' + name + '/frequency', 50)))
-        duty_min = float(rospy.get_param('/actuators/' + name + '/duty/min', 0.05))
-        duty_max = float(rospy.get_param('/actuators/' + name + '/duty/max', 0.10))
-        output_min = float(rospy.get_param('/actuators/' + name + '/output/min', -1.0))
-        output_max = float(rospy.get_param('/actuators/' + name + '/output/max', 1.0))
+        output_pin = int(rospy.get_param('actuators/' + name + '/output_pin', 1))
+        board_pin = int(rospy.get_param('actuators/' + name + '/board_pin', 13))
+        period_us = int(1e6 / float(rospy.get_param('actuators/' + name + '/frequency', 50)))
+        duty_min = float(rospy.get_param('actuators/' + name + '/duty/min', 0.05))
+        duty_max = float(rospy.get_param('actuators/' + name + '/duty/max', 0.10))
+        output_min = float(rospy.get_param('actuators/' + name + '/output/min', -1.0))
+        output_max = float(rospy.get_param('actuators/' + name + '/output/max', 1.0))
 
         self.actuator = Actuator(board_pin, period_us, duty_min, duty_max, output_min, output_max)
 
