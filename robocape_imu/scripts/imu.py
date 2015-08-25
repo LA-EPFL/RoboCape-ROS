@@ -124,9 +124,9 @@ class Mpu9150:
         if (self.address is not MPU9150_I2C_ADDR_LOW) and (self.address is not MPU9150_I2C_ADDR_HIGH):
             self.address = MPU9150_I2C_ADDR_DEFAULT
 
-        self.dev = m.I2c(1)
+        self.dev = mraa.I2c(1)
         self.dev.address(self.address)
-        self.dev.frequency(MRAA_I2C_FAST)
+        self.dev.frequency(mraa.I2C_FAST)
 
         self.setup_conf()
 
@@ -152,8 +152,28 @@ class Mpu9150:
         # Set Gyroscope update rate at 1kHz (same as accelerometer)
         self.dev.writeReg(MPU9150_SMPLRT_DIV, 0x07)
 
-        # Initialise compass
-        self.init_compass()
+        # Boot compass & configure it
+        self.dev.writeReg(0x0A,0x00)
+        self.dev.writeReg(0x0A,0x0F) # Self-test
+        self.dev.writeReg(0x0A,0x00)
+
+        # Configure i2c communication/reading
+        self.dev.writeReg(MPU9150_I2C_MST_CTRL,0x40)  # Wait for Data at slave0
+        self.dev.writeReg(MPU9150_I2C_SLV0_ADDR,0x8C) # Set slave0 i2c addr at 0x0C
+        self.dev.writeReg(MPU9150_I2C_SLV0_REG,0x02)  # Set reading start at slave0
+        self.dev.writeReg(MPU9150_I2C_SLV0_CTRL,0x88) # Enable & set offset
+        self.dev.writeReg(MPU9150_I2C_SLV1_ADDR,0x0C) # Set slave1 i2c addr at 0x0C
+        self.dev.writeReg(MPU9150_I2C_SLV1_REG,0x0A)  # Set reading start at slave1
+        self.dev.writeReg(MPU9150_I2C_SLV1_CTRL,0x81) # Enable at set length to 1
+        self.dev.writeReg(MPU9150_I2C_SLV1_DO,0x01)
+        self.dev.writeReg(MPU9150_I2C_MST_DELAY_CTRL,0x03) # Set delay rate
+        self.dev.writeReg(0x01,0x80)                   # Set i2c slave4 delay
+        self.dev.writeReg(MPU9150_I2C_SLV4_CTRL,0x04)
+        self.dev.writeReg(MPU9150_I2C_SLV1_DO,0x00)    # Clear user settings
+        self.dev.writeReg(MPU9150_USER_CTRL,0x00)
+        self.dev.writeReg(MPU9150_I2C_SLV1_DO,0x01)    # Override register
+        self.dev.writeReg(MPU9150_USER_CTRL,0x20)      # Enable master i2c mode
+        self.dev.writeReg(MPU9150_I2C_SLV4_CTRL,0x13)  # Disable slv4
 
         # Set Gyroscope scale
         if self.gyro_scale <= 250.0:
@@ -183,42 +203,9 @@ class Mpu9150:
             self.accel_scale = 16
             self.dev.writeReg(MPU9150_ACCEL_CONFIG, 0x18)
 
-    def init_compass(self):
-        'Setup compass and make it output on main i2c address'
-        # Boot compass & configure it
-        self.dev.writeReg(0x0A,0x00)
-        self.dev.writeReg(0x0A,0x0F) # Self-test
-        self.dev.writeReg(0x0A,0x00)
-
-        # Configure i2c communication/reading
-        self.dev.writeReg(MPU9150_I2C_MST_CTRL,0x40)  # Wait for Data at slave0
-        self.dev.writeReg(MPU9150_I2C_SLV0_ADDR,0x8C) # Set slave0 i2c addr at 0x0C
-        self.dev.writeReg(MPU9150_I2C_SLV0_REG,0x02)  # Set reading start at slave0
-        self.dev.writeReg(MPU9150_I2C_SLV0_CTRL,0x88) # Enable & set offset
-        self.dev.writeReg(MPU9150_I2C_SLV1_ADDR,0x0C) # Set slave1 i2c addr at 0x0C
-        self.dev.writeReg(MPU9150_I2C_SLV1_REG,0x0A)  # Set reading start at slave1
-        self.dev.writeReg(MPU9150_I2C_SLV1_CTRL,0x81) # Enable at set length to 1
-        self.dev.writeReg(MPU9150_I2C_SLV1_DO,0x01)
-        self.dev.writeReg(MPU9150_I2C_MST_DELAY_CTRL,0x03) # Set delay rate
-        self.dev.writeReg(0x01,0x80)                   # Set i2c slave4 delay
-        self.dev.writeReg(MPU9150_I2C_SLV4_CTRL,0x04)
-        self.dev.writeReg(MPU9150_I2C_SLV1_DO,0x00)    # Clear user settings
-        self.dev.writeReg(MPU9150_USER_CTRL,0x00)
-        self.dev.writeReg(MPU9150_I2C_SLV1_DO,0x01)    # Override register
-        self.dev.writeReg(MPU9150_USER_CTRL,0x20)      # Enable master i2c mode
-        self.dev.writeReg(MPU9150_I2C_SLV4_CTRL,0x13)  # Disable slv4
-
-        # Compass is ready
-
-    def display_imu(self):
-        'Show hardware info about the specified IMU'
-        print "IMU in use at address: %s" % self.address
-        print "Accelerometer scale: %d g" % self.accel_scale
-        print "Gyroscope scale: %d deg/s" % self.gyro_scale
-
     def display_info(self):
         'Show sensor raw data from IMU'
-        self.update_all()
+        self.read()
         print "Acceleration vector (in m/s^2):"
         print "x: %.5f, y: %.5f, z: %.5f" \
                 % (self.accel[0], self.accel[1], self.accel[2])
@@ -230,99 +217,31 @@ class Mpu9150:
                 % (self.compass[0], self.compass[1], self.compass[2])
         print "Temperature (in C): %f" % self.temp
 
-    def get_info(self):
-        'Return a string containing all the sensors data'
-        self.update_all()
-        # Acceleration in m/s^2
-        accel = '%.5f,%.5f,%.5f,' \
-                % (self.accel[0], self.accel[1], self.accel[2])
-        # Angular velocity in rad/s
-        gyro = '%.5f, %.5f, %.5f,' \
-               % (self.gyro[0], self.gyro[1], self.gyro[2])
-        # Compass heading in uT
-        compass = '%.1f,%.1f,%.1f,' \
-                  % (self.compass[0], self.compass[1], self.compass[2])
-        # Temperature in C
-        temp = '%.2f,' % self.temp
-        # Add identifier and concatenate
-        return ''.join(['imu,', accel, gyro, compass, temp])
-
-    def get_data(self):
-        'Return an array containing all the sensors data'
-        self.update_all()
-        return self.accel[0], self.accel[1], self.accel[2], \
-               self.gyro[0], self.gyro[1], self.gyro[2], \
-               self.compass[0], self.compass[1], self.compass[2], \
-               self.temp
-
-    def update_all(self):
-        'Get all subsensors data'
-        self.update_accel()
-        self.update_gyro()
-        self.update_compass()
-        self.update_temp()
-
-    def update_accel(self):
-        'Get acceleration vector from IMU'
-        # Get raw sensor data
-        accel_x = self.dev.readWordReg(MPU9150_ACCEL_XOUT_H)
-        accel_y = self.dev.readWordReg(MPU9150_ACCEL_YOUT_H)
-        accel_z = self.dev.readWordReg(MPU9150_ACCEL_ZOUT_H)
-
-        # Convert values to the correctly scaled values in g
-        scaling = self.accel_scaling
-
-        self.accel[0] = accel_x / scaling
-        self.accel[1] = accel_y / scaling
-        self.accel[2] = accel_z / scaling
+    def read(self):
+        'Get all sensors data'
+        self.accel[0] = self.dev.readWordReg(MPU9150_ACCEL_XOUT_H) / self.accel_scaling
+        self.accel[1] = self.dev.readWordReg(MPU9150_ACCEL_YOUT_H) / self.accel_scaling
+        self.accel[2] = self.dev.readWordReg(MPU9150_ACCEL_ZOUT_H) / self.accel_scaling
 
     def update_gyro(self):
         'Get angular velocity vector from IMU'
         # Get raw sensor data
-        gyro_x = self.dev.readWordReg(MPU9150_GYRO_XOUT_H)
-        gyro_y = self.dev.readWordReg(MPU9150_GYRO_YOUT_H)
-        gyro_z = self.dev.readWordReg(MPU9150_GYRO_ZOUT_H)
-
-        # Convert values to the correctly scaled values in rad/s
-        scaling = self.gyro_scaling
-
-        self.gyro[0] = gyro_x / scaling
-        self.gyro[1] = gyro_y / scaling
-        self.gyro[2] = gyro_z / scaling
+        self.gyro[0] = self.dev.readWordReg(MPU9150_GYRO_XOUT_H) / self.gyro_scaling
+        self.gyro[1] = self.dev.readWordReg(MPU9150_GYRO_YOUT_H) / self.gyro_scaling
+        self.gyro[2] = self.dev.readWordReg(MPU9150_GYRO_ZOUT_H) / self.gyro_scaling
 
     def update_compass(self):
         'Get compass heading vector from IMU'
         # Get raw sensor data
-        compass_x = self.dev.readWordReg(MPU9150_CMPS_XOUT_H)
-        compass_y = self.dev.readWordReg(MPU9150_CMPS_YOUT_H)
-        compass_z = self.dev.readWordReg(MPU9150_CMPS_ZOUT_H)
-
-        # Convert values to the correctly scaled values in uT
-        scaling = self.compass_scaling
-
-        self.compass[0] = compass_x / scaling
-        self.compass[1] = compass_y / scaling
-        self.compass[2] = compass_z / scaling
+        self.compass[0] = self.dev.readWordReg(MPU9150_CMPS_XOUT_H) / self.compass_scaling
+        self.compass[1] = self.dev.readWordReg(MPU9150_CMPS_YOUT_H) / self.compass_scaling
+        self.compass[2] = self.dev.readWordReg(MPU9150_CMPS_ZOUT_H) / self.compass_scaling
 
     def update_temp(self):
         'Get temperature measurement from IMU'
-        # Get raw sensor data
-        temp = self.dev.readWordReg(MPU9150_TEMP_OUT_H)
-
-        # Convert values to the correctly scaled values in degree C
-        self.temp = temp / 340.0 + 35
+        self.temp = self.dev.readWordReg(MPU9150_TEMP_OUT_H) / 340.0 + 35
 
     def get_compass_normalised(self):
         'Returns compass measurement normalised'
-        compass_x = self.compass[0]
-        compass_y = self.compass[1]
-        compass_z = self.compass[2]
-
-        # Compute norm
-        norm = (compass_x**2 + compass_y**2 + compass_z**2)**0.5
-
-        # Normalise
-        return compass_x / norm, compass_y / norm, compass_z / norm
-
-    def __del__(self):
-        pass
+        norm = (self.compass[0]**2 + self.compass[1]**2 + self.compass[2]**2)**0.5
+        return self.compass[0] / norm, self.compass[1] / norm, self.compass[2] / norm
