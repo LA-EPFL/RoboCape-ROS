@@ -21,5 +21,5 @@ include_directories(include
 # add_executable(actuator src/actuator.cpp)
 # target_link_libraries(actuator ${catkin_LIBRARIES})
 
-catkin_install_python(PROGRAMS scripts/actuator
+catkin_install_python(PROGRAMS scripts/actuator.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
