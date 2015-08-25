@@ -275,6 +275,7 @@ class ImuHandler:
         while not rospy.is_shutdown():
             rospy.loginfo(rospy.get_caller_id() + "publishing IMU data")
 
+            self.imu.read()
             msg = self.pack_message()
             self.pub.publish(msg)
 
@@ -283,7 +284,9 @@ class ImuHandler:
     def pack_message(self):
         msg = Imu()
 
-        msg.header.stamp = rospy.get_time()
+        now = rospy.get_rostime()
+        msg.header.stamp.secs = now.secs
+        msg.header.stamp.nsecs = now.nsecs
         msg.header.frame_id = "robocape"
 
         msg.linear_acceleration.x = self.imu.accel[0]
