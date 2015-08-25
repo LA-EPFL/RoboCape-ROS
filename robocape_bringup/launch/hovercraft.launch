@@ -1,4 +1,8 @@
 <launch>
+  <arg name="IP" default="localhost"/>
+  <env name="ROS_IP" value="$(arg IP)"/>
+  <env name="ROS_MASTER_URI" value="http://$(arg IP):11311"/>
+
   <!-- Initialise parameter server -->
   <rosparam command="load"
             file="$(find robocape_bringup)/config/hovercraft_actuators.yaml"
