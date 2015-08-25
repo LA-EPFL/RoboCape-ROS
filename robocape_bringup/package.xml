@@ -12,5 +12,14 @@
 
   <buildtool_depend>catkin</buildtool_depend>
 
-  
+  <build_depend>robocape_actuators</build_depend>
+  <build_depend>robocape_imu</build_depend>
+  <build_depend>nmea_navsat_driver</build_depend>
+  <build_depend>usb_cam</build_depend>
+
+  <run_depend>robocape_actuators</run_depend>
+  <run_depend>robocape_imu</run_depend>
+  <run_depend>nmea_navsat_driver</run_depend>
+  <run_depend>usb_cam</run_depend>
+
 </package>
