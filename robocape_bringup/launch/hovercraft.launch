@@ -4,6 +4,10 @@
             file="$(find robocape_bringup)/config/hovercraft_actuators.yaml"
             ns="hovercraft"
   />
+  <rosparam command="load"
+            file="$(find robocape_bringup)/config/hovercraft_sensors.yaml"
+            ns="hovercraft"
+  />
 
   <!-- Actuator handler nodes -->
   <node name="actuator_hover_handler"
@@ -17,6 +21,14 @@
         pkg="robocape_actuators"
         type="actuator.py"
         args="rudder"
+        ns="hovercraft"
+        respawn="true"
+  />
+
+  <!-- Sensor nodes -->
+  <node name="imu_raw_publisher"
+        pkg="robocape_imu"
+        type="imu.py"
         ns="hovercraft"
         respawn="true"
   />
