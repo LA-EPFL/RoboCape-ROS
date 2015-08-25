@@ -36,6 +36,15 @@
         ns="hovercraft"
         respawn="true"
   />
+  <node name="nmea_serial_driver"
+        pkg="nmea_navsat_driver"
+        type="nmea_serial_driver"
+        ns="hovercraft"
+        respawn="true">
+    <param name="port" value="/dev/ttyO1">
+    <param name="baud" value="9600">
+    <param name="frame_id" value="robocape">
+  </node>
   <node name="usb_cam"
         pkg="usb_cam"
         type="usb_cam_node"
