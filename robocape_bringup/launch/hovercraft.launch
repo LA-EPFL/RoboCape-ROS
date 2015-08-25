@@ -1,5 +1,5 @@
 <launch>
-  <arg name="IP" default="localhost"/>
+  <arg name="IP"/>
   <env name="ROS_IP" value="$(arg IP)"/>
   <env name="ROS_MASTER_URI" value="http://$(arg IP):11311"/>
 
