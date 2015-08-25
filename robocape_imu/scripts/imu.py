@@ -218,15 +218,15 @@ class Mpu9150:
         print "Temperature (in C): %f" % self.temp
 
     def read_word(self, reg_h, reg_l):
-            'Reads data from high & low registers and returns the combination'
-            # Read register values
-            val_h = self.dev.readReg(reg_h)
-            val_l = self.dev.readReg(reg_l)
+        'Reads data from high & low registers and returns the combination'
+        # Read register values
+        val_h = self.dev.readReg(reg_h)
+        val_l = self.dev.readReg(reg_l)
 
-            if val_h > 127:
-                return (((val_h - 256) << 8) - val_l)
-            else:
-                return ((val_h << 8) + val_l)
+        if val_h > 127:
+            return (((val_h - 256) << 8) - val_l)
+        else:
+            return ((val_h << 8) + val_l)
 
     def read(self):
         'Get all sensors data'
