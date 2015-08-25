@@ -217,29 +217,40 @@ class Mpu9150:
                 % (self.compass[0], self.compass[1], self.compass[2])
         print "Temperature (in C): %f" % self.temp
 
+    def read_word(self, reg_h, reg_l):
+            'Reads data from high & low registers and returns the combination'
+            # Read register values
+            val_h = self.dev.readReg(reg_h)
+            val_l = self.dev.readReg(reg_l)
+
+            if val_h > 127:
+                return (((val_h - 256) << 8) - val_l)
+            else:
+                return ((val_h << 8) + val_l)
+
     def read(self):
         'Get all sensors data'
-        self.accel[0] = self.dev.readWordReg(MPU9150_ACCEL_XOUT_H) / self.accel_scaling
-        self.accel[1] = self.dev.readWordReg(MPU9150_ACCEL_YOUT_H) / self.accel_scaling
-        self.accel[2] = self.dev.readWordReg(MPU9150_ACCEL_ZOUT_H) / self.accel_scaling
+        self.accel[0] = self.read_word(MPU9150_ACCEL_XOUT_H, MPU9150_ACCEL_XOUT_L) / self.accel_scaling
+        self.accel[1] = self.read_word(MPU9150_ACCEL_YOUT_H, MPU9150_ACCEL_YOUT_L) / self.accel_scaling
+        self.accel[2] = self.read_word(MPU9150_ACCEL_ZOUT_H, MPU9150_ACCEL_ZOUT_L) / self.accel_scaling
 
     def update_gyro(self):
         'Get angular velocity vector from IMU'
         # Get raw sensor data
-        self.gyro[0] = self.dev.readWordReg(MPU9150_GYRO_XOUT_H) / self.gyro_scaling
-        self.gyro[1] = self.dev.readWordReg(MPU9150_GYRO_YOUT_H) / self.gyro_scaling
-        self.gyro[2] = self.dev.readWordReg(MPU9150_GYRO_ZOUT_H) / self.gyro_scaling
+        self.gyro[0] = self.read_word(MPU9150_GYRO_XOUT_H, MPU9150_GYRO_XOUT_L) / self.gyro_scaling
+        self.gyro[1] = self.read_word(MPU9150_GYRO_YOUT_H, MPU9150_GYRO_YOUT_L) / self.gyro_scaling
+        self.gyro[2] = self.read_word(MPU9150_GYRO_ZOUT_H, MPU9150_GYRO_ZOUT_L) / self.gyro_scaling
 
     def update_compass(self):
         'Get compass heading vector from IMU'
         # Get raw sensor data
-        self.compass[0] = self.dev.readWordReg(MPU9150_CMPS_XOUT_H) / self.compass_scaling
-        self.compass[1] = self.dev.readWordReg(MPU9150_CMPS_YOUT_H) / self.compass_scaling
-        self.compass[2] = self.dev.readWordReg(MPU9150_CMPS_ZOUT_H) / self.compass_scaling
+        self.compass[0] = self.read_word(MPU9150_CMPS_XOUT_H, MPU9150_CMPS_XOUT_L) / self.compass_scaling
+        self.compass[1] = self.read_word(MPU9150_CMPS_YOUT_H, MPU9150_CMPS_YOUT_L) / self.compass_scaling
+        self.compass[2] = self.read_word(MPU9150_CMPS_ZOUT_H, MPU9150_CMPS_ZOUT_L) / self.compass_scaling
 
     def update_temp(self):
         'Get temperature measurement from IMU'
-        self.temp = self.dev.readWordReg(MPU9150_TEMP_OUT_H) / 340.0 + 35
+        self.temp = self.read_word(MPU9150_TEMP_OUT_H, MPU9150_TEMP_OUT_L) / 340.0 + 35
 
     def get_compass_normalised(self):
         'Returns compass measurement normalised'
