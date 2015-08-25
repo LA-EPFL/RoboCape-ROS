@@ -293,9 +293,9 @@ class ImuHandler:
         msg.linear_acceleration.x = self.imu.accel[0]
         msg.linear_acceleration.y = self.imu.accel[1]
         msg.linear_acceleration.z = self.imu.accel[2]
-        msg.linear_acceleration_covariance = 0.01 * (1.0, 0.0, 0.0,
-                                                     0.0, 1.0, 0.0,
-                                                     0.0, 0.0, 1.0)
+        msg.linear_acceleration_covariance = (0.1, 0.0, 0.0,
+                                              0.0, 0.1, 0.0,
+                                              0.0, 0.0, 0.1)
 
         msg.angular_velocity.x = self.imu.gyro[0]
         msg.angular_velocity.y = self.imu.gyro[1]
@@ -311,9 +311,9 @@ class ImuHandler:
         msg.orientation.y = quaternion[1]
         msg.orientation.z = quaternion[2]
         msg.orientation.w = quaternion[3]
-        msg.orientation_covariance = 10 * (1.0, 0.0, 0.0,
-                                           0.0, 1.0, 0.0,
-                                           0.0, 0.0, 1.0)
+        msg.orientation_covariance = (10.0, 0.0,  0.0,
+                                      0.0,  10.0, 0.0,
+                                      0.0,  0.0,  10.0)
 
         return msg
 
