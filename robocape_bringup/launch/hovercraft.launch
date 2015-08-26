@@ -32,7 +32,7 @@
   <!-- Sensor nodes -->
   <node name="imu_raw_publisher"
         pkg="robocape_imu"
-        type="imu.py"
+        type="imu_pub.py"
         ns="hovercraft"
         respawn="true"
   />

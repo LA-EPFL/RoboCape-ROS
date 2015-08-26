@@ -14,5 +14,5 @@ include_directories(
   ${catkin_INCLUDE_DIRS}
 )
 
-catkin_install_python(PROGRAMS scripts/imu.py
+catkin_install_python(PROGRAMS scripts/imu_pub.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
