@@ -20,14 +20,14 @@
   <!-- Actuator handler nodes -->
   <node name="actuator_hover_handler"
         pkg="robocape_actuators"
-        type="actuator.py"
+        type="actuator_sub.py"
         args="hover"
         ns="hovercraft"
         respawn="true"
   />
   <node name="actuator_rudder_handler"
         pkg="robocape_actuators"
-        type="actuator.py"
+        type="actuator_sub.py"
         args="rudder"
         ns="hovercraft"
         respawn="true"
