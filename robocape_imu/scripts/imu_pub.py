@@ -13,7 +13,7 @@ class ImuHandler:
         rospy.loginfo(rospy.get_caller_id() + 'Initialising {} node'.format(node_name))
 
         # Get all parameters from config (rosparam)
-        address = int(rospy.get_param('imu/address', MPU9150_I2C_ADDR_DEFAULT))
+        address = int(rospy.get_param('imu/address', 0))
         gyro_scale = int(rospy.get_param('imu/gyroscope/scale', 250))
         acc_scale = int(rospy.get_param('imu/accelerometer/scale', 2))
 
