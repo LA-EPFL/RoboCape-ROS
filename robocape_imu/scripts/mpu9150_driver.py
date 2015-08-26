@@ -141,7 +141,7 @@ class Mpu9150(Imu):
         info += 'x: {:.2f}, y: {:.2f}, z: {:.2f}\n'.format(self.compass[0], self.compass[1], self.compass[2])
         info += 'Temperature (in C): {:.2f}\n'.format(self.temp)
 
-    def read(self):
+    def update(self):
         self.accel[0] = self.__read_word(MPU9150_ACCEL_XOUT_H, MPU9150_ACCEL_XOUT_L) / self.accel_scaling
         self.accel[1] = self.__read_word(MPU9150_ACCEL_YOUT_H, MPU9150_ACCEL_YOUT_L) / self.accel_scaling
         self.accel[2] = self.__read_word(MPU9150_ACCEL_ZOUT_H, MPU9150_ACCEL_ZOUT_L) / self.accel_scaling
