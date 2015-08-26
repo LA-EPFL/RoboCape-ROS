@@ -1,4 +1,4 @@
-class Imu:
+class Imu(object):
     def __init__(self):
         self.accel = [0.0, 0.0, 0.0]
         self.gyro = [0.0, 0.0, 0.0]
