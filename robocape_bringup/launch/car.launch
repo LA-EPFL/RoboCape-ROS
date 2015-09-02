@@ -18,34 +18,28 @@
   />
 
   <!-- Actuator handler nodes -->
-  <node name="actuator_hover_handler"
+  <node name="actuator_engine_handler"
         pkg="robocape_actuators"
         type="actuator_sub.py"
-        args="hover"
+        args="engine"
         ns="car"
         respawn="true"
   />
-  <node name="actuator_rudder_handler"
+  <node name="actuator_steering_handler"
         pkg="robocape_actuators"
         type="actuator_sub.py"
-        args="rudder"
+        args="steering"
         ns="car"
         respawn="true"
   />
 
   <!-- Sensor nodes -->
-  <node name="imu_raw_publisher"
-        pkg="robocape_imu"
-        type="imu_pub.py"
-        ns="car"
-        respawn="true"
-  />
   <node name="nmea_serial_driver"
         pkg="nmea_navsat_driver"
         type="nmea_serial_driver"
         ns="car"
         respawn="true">
-    <param name="port" value="/dev/ttyO1"/>
+    <param name="port" value="/dev/ttyO4"/>
     <param name="baud" value="9600"/>
     <param name="frame_id" value="robocape"/>
   </node>
