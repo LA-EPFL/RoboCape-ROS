@@ -12,6 +12,8 @@ def main():
 
     (opts, args) = parser.parse_args()
 
+    dev = pyUblox.ublox.UBlox(opts.port, baudrate=opts.baudrate, timeout=2)
+
     # which SV IDs we have seen
     svid_seen = {}
     svid_ephemeris = {}
