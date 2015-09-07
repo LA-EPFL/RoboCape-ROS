@@ -55,7 +55,7 @@ def main():
                 msg.unpack()
                 svid_ephemeris[msg.svid] = ephemeris.EphemerisData(msg)
             except pyUblox.ublox.pyUblox.ubloxError as e:
-            print(e)
+                print(e)
 
 if __name__ == '__main__':
     main()
