@@ -27,9 +27,19 @@ def main():
     dev.configure_solution_rate(rate_ms=1000)
 
     dev.configure_message_rate(pyUblox.ublox.CLASS_NAV, pyUblox.ublox.MSG_NAV_POSLLH, 1)
+    dev.configure_message_rate(pyUblox.ublox.CLASS_NAV, pyUblox.ublox.MSG_NAV_STATUS, 1)
+    dev.configure_message_rate(pyUblox.ublox.CLASS_NAV, pyUblox.ublox.MSG_NAV_SOL, 1)
+    dev.configure_message_rate(pyUblox.ublox.CLASS_NAV, pyUblox.ublox.MSG_NAV_VELNED, 1)
+    dev.configure_message_rate(pyUblox.ublox.CLASS_NAV, pyUblox.ublox.MSG_NAV_SVINFO, 1)
+    dev.configure_message_rate(pyUblox.ublox.CLASS_NAV, pyUblox.ublox.MSG_NAV_VELECEF, 1)
     dev.configure_message_rate(pyUblox.ublox.CLASS_NAV, pyUblox.ublox.MSG_NAV_POSECEF, 1)
     dev.configure_message_rate(pyUblox.ublox.CLASS_RXM, pyUblox.ublox.MSG_RXM_RAW, 1)
     dev.configure_message_rate(pyUblox.ublox.CLASS_RXM, pyUblox.ublox.MSG_RXM_SFRB, 1)
+    dev.configure_message_rate(pyUblox.ublox.CLASS_RXM, pyUblox.ublox.MSG_RXM_SVSI, 1)
+    dev.configure_message_rate(pyUblox.ublox.CLASS_RXM, pyUblox.ublox.MSG_RXM_ALM, 1)
+    dev.configure_message_rate(pyUblox.ublox.CLASS_RXM, pyUblox.ublox.MSG_RXM_EPH, 1)
+    dev.configure_message_rate(pyUblox.ublox.CLASS_NAV, pyUblox.ublox.MSG_NAV_TIMEGPS, 5)
+    dev.configure_message_rate(pyUblox.ublox.CLASS_NAV, pyUblox.ublox.MSG_NAV_CLOCK, 5)
 
 if __name__ == '__main__':
     main()
