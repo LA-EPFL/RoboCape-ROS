@@ -12,3 +12,6 @@ catkin_package()
 include_directories(
   ${catkin_INCLUDE_DIRS}
 )
+
+catkin_install_python(PROGRAMS scripts/gps_config.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
