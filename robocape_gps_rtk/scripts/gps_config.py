@@ -24,7 +24,7 @@ def main():
     dev.configure_poll_port(pyUblox.ublox.PORT_SERIAL1)
     dev.configure_poll_port(pyUblox.ublox.PORT_SERIAL2)
     dev.configure_poll_port(pyUblox.ublox.PORT_USB)
-    dev.configure_solution_rate(rate_ms=1000)
+    dev.configure_solution_rate(rate_ms=100)
 
     dev.configure_message_rate(pyUblox.ublox.CLASS_NAV, pyUblox.ublox.MSG_NAV_POSLLH, 1)
     dev.configure_message_rate(pyUblox.ublox.CLASS_NAV, pyUblox.ublox.MSG_NAV_STATUS, 1)
