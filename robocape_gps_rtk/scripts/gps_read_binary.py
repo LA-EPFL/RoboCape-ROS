@@ -46,7 +46,7 @@ def main():
         try:
             print(str(msg))
             sys.stdout.flush()
-        except pyUblox.ublox.pyUblox.ubloxError as e:
+        except pyUblox.ublox.ubloxError as e:
             print(e)
 
         if msg.name() == 'RXM_RAW':
@@ -56,7 +56,7 @@ def main():
             try:
                 msg.unpack()
                 svid_ephemeris[msg.svid] = ephemeris.EphemerisData(msg)
-            except pyUblox.ublox.pyUblox.ubloxError as e:
+            except pyUblox.ublox.ubloxError as e:
                 print(e)
 
 if __name__ == '__main__':
