@@ -57,7 +57,7 @@ class PositionPublisher(object):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Convert GPS fix data to meters position')
 
-    parser.add_argument('longitude', type=int, help='Longitude of the origin point')
+    parser.add_argument('longitude', type=float, help='Longitude of the origin point')
     parser.add_argument('latitude', type=float, help='Latitude of the origin point')
 
     args = parser.parse_args()
