@@ -1,0 +1,9 @@
+<launch>
+  <!-- Sensor nodes -->
+  <node name="gps_to_meter"
+        pkg="robocape_gps_rtk"
+        type="gps_to_meter.py"
+        ns="car"
+        respawn="true"
+        args="6.566 46.520"/>
+</launch>
