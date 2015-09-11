@@ -37,7 +37,7 @@ def main():
         if msg is None:
             if opts.reopen:
                 dev.close()
-                dev = pyUblox.ublox.pyUblox.ublox(opts.port, baudrate=opts.baudrate, timeout=2)
+                dev = pyUblox.ublox.UBlox(opts.port, baudrate=opts.baudrate, timeout=2)
                 dev.set_logfile(opts.log, append=True)
                 continue
             break
