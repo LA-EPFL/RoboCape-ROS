@@ -63,7 +63,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     try:
-        position_pub = PositionPublisher()
+        position_pub = PositionPublisher(args.longitude, args.latitude)
     except rospy.ROSInterruptException:
         pass
 
