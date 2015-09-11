@@ -15,3 +15,6 @@ include_directories(
 
 catkin_install_python(PROGRAMS scripts/gps_config.py
   DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
+
+catkin_install_python(PROGRAMS scripts/gps_to_meter.py
+  DESTINATION ${CATKIN_PACKAGE_BIN_DESTINATION})
