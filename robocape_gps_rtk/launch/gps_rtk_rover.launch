@@ -1,0 +1,15 @@
+<launch>
+    <!-- Configure GPS -->
+    <node name="gps_config"
+          pkg="robocape_gps_rtk"
+          type="gps_config.py"
+          args="--port='/dev/ttyO4' --baudrate=9600"
+    />
+
+    <!-- GPS with RTK node -->
+    <node name="rtkrcv" pkg="rtklib" type="rtkrcv" clear_params="true" output="screen"
+          args="-t 5 -s ">
+       <rosparam file="$(find robocape_gps_rtk)/params/RoverBase.yaml"/>
+    </node>
+</launch>
+

@@ -1,0 +1,3 @@
+[submodule "robocape_gps_rtk/scripts/pyUblox"]
+	path = robocape_gps_rtk/scripts/pyUblox
+	url = https://github.com/syrianspock/pyUblox.git

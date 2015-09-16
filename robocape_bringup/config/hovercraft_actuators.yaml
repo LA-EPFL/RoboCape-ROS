@@ -1,0 +1,21 @@
+actuators:
+    hover:
+        output_pin: 0
+        board_pin: 60
+        frequency: 50
+        duty:
+            min: 0.065
+            max: 0.115
+        output:
+            min: 0.0
+            max: 1.0
+    rudder:
+        output_pin: 1
+        board_pin: 62
+        frequency: 50
+        duty:
+            min: 0.065
+            max: 0.115
+        output:
+            min: 0.0
+            max: 1.0

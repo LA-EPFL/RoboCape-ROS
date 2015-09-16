@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<package>
+  <name>robocape_bringup</name>
+  <version>0.0.0</version>
+  <description>The robocape_bringup package</description>
+
+  <maintainer email="missrisalaheddine@gmail.com">Salah-Eddine Missri</maintainer>
+
+  <license>TODO</license>
+
+  <!-- <url type="website">http://wiki.ros.org/robocape_bringup</url> -->
+
+  <buildtool_depend>catkin</buildtool_depend>
+
+  <build_depend>robocape_actuators</build_depend>
+  <build_depend>robocape_imu</build_depend>
+  <build_depend>nmea_navsat_driver</build_depend>
+  <build_depend>usb_cam</build_depend>
+
+  <run_depend>robocape_actuators</run_depend>
+  <run_depend>robocape_imu</run_depend>
+  <run_depend>nmea_navsat_driver</run_depend>
+  <run_depend>usb_cam</run_depend>
+
+</package>
