@@ -224,6 +224,46 @@ class Mpu9150(Imu):
             self.accel_scale = 16
             self.dev.writeReg(MPU9150_ACCEL_CONFIG, 0x18)
 
+	def __calibrate():
+		(acc_bias, gyro_bias) = self.__getAccGyroBiases();
+		
+		
+	def __getAccGyroBiases()
+		nb_samples = 10;
+		for i in range (1,nb_samples):
+			self.update();
+			acc_bias[0] += self.accel[0];
+			acc_bias[1] += self.accel[1];
+			acc_bias[2] += self.accel[2];
+			
+			gyro_bias[0] += self.gyro[0];
+			gyro_bias[1] += self.gyro[1];
+			gyro_bias[2] += self.gyro[2];
+			
+		acc_bias[0] /= nb_samples;
+		acc_bias[1] /= nb_samples;
+		acc_bias[2] /= nb_samples;
+		
+		gyro_bias[0] /= nb_samples;
+		gyro_bias[1] /= nb_samples;
+		gyro_bias[2] /= nb_samples;
+		
+		return (acc_bias, gyro_bias);
+			
+	def __setGyroBiasReg(gyro_bias)
+		for i in range(0,2):
+			gyro_bias[i] = -(gyro_bias[i]);
+			
+		data[0] = (gyro_bias[0] >> 8) & 0xff;
+		data[1] = (gyro_bias[0]) & 0xff;
+		data[2] = (gyro_bias[1] >> 8) & 0xff;
+		data[3] = (gyro_bias[1]) & 0xff;
+		data[4] = (gyro_bias[2] >> 8) & 0xff;
+		data[5] = (gyro_bias[2]) & 0xff;
+		
+		for i in range(0,5):
+			self.dev.writeReg(0x13+i, data[i]);
+	
     def __read_word(self, reg_h, reg_l):
         'Reads data from high & low registers and returns the combination'
         # Read register values
