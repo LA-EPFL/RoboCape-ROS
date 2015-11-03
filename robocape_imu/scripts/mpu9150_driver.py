@@ -228,7 +228,7 @@ class Mpu9150(Imu):
 		(acc_bias, gyro_bias) = self.__getAccGyroBiases();
 		self.__setGyroBiasReg(gyro_bias);
 		
-	def __getAccGyroBiases()
+	def __getAccGyroBiases():
 		nb_samples = 10;
 		for i in range (1,nb_samples):
 			self.update();
@@ -250,7 +250,7 @@ class Mpu9150(Imu):
 		
 		return (acc_bias, gyro_bias);
 			
-	def __setGyroBiasReg(gyro_bias)
+	def __setGyroBiasReg(gyro_bias):
 		for i in range(0,2):
 			gyro_bias[i] = -(gyro_bias[i]);
 			
