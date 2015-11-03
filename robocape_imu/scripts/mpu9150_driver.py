@@ -140,6 +140,7 @@ class Mpu9150(Imu):
         info += 'Compass heading vector (in uT):\n'
         info += 'x: {:.2f}, y: {:.2f}, z: {:.2f}\n'.format(self.compass[0], self.compass[1], self.compass[2])
         info += 'Temperature (in C): {:.2f}\n'.format(self.temp)
+		return info;
 
     def update(self):
         self.accel[0] = self.__read_word(MPU9150_ACCEL_XOUT_H, MPU9150_ACCEL_XOUT_L) / self.accel_scaling
