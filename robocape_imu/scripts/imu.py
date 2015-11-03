@@ -13,3 +13,7 @@ class Imu(object):
     def update(self):
         'Update all sensors data'
         pass
+
+	def calibrate(self):
+		'Calibrate biases'
+		pass
