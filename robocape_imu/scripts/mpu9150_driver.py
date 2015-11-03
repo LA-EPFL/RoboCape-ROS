@@ -256,9 +256,9 @@ class Mpu9150(Imu):
         
         # remove gravity from accel Zero
         if acc_bias[2] > 0:
-            acc_bias -= self.accel_scale;
+            acc_bias[2] -= self.accel_scale;
         else:
-            acc_bias += self.accel_scale;
+            acc_bias[2] += self.accel_scale;
 
         return (acc_bias, gyro_bias);
             
