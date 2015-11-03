@@ -235,22 +235,21 @@ class Mpu9150(Imu):
         gyro_bias = [0, 0, 0];
 
         for i in range (1,nb_samples):
-            self.update();
-            acc_bias[0] += self.accel[0];
-            acc_bias[1] += self.accel[1];
-            acc_bias[2] += self.accel[2];
+            acc_bias[0] += self.__read_word(MPU9150_ACCEL_XOUT_H, MPU9150_ACCEL_XOUT_L);
+            acc_bias[1] += self.__read_word(MPU9150_ACCEL_YOUT_H, MPU9150_ACCEL_YOUT_L);
+            acc_bias[2] += self.__read_word(MPU9150_ACCEL_ZOUT_H, MPU9150_ACCEL_ZOUT_L);
             
-            gyro_bias[0] += self.gyro[0];
-            gyro_bias[1] += self.gyro[1];
-            gyro_bias[2] += self.gyro[2];
+            gyro_bias[0] += self.__read_word(MPU9150_GYRO_XOUT_H, MPU9150_GYRO_XOUT_L);
+            gyro_bias[1] += self.__read_word(MPU9150_GYRO_YOUT_H, MPU9150_GYRO_YOUT_L);
+            gyro_bias[2] += self.__read_word(MPU9150_GYRO_ZOUT_H, MPU9150_GYRO_ZOUT_L);
             
-        acc_bias[0] //= nb_samples;
-        acc_bias[1] /= nb_samples;
-        acc_bias[2] /= nb_samples;
+        acc_bias[0] = acc_bias[0]/nb_samples/self.accel_scale;
+        acc_bias[1] = acc_bias[1]/nb_samples/self.accel_scale;
+        acc_bias[2] = acc_bias[2]/nb_samples/self.accel_scale;
         
-        gyro_bias[0] //= nb_samples;
-        gyro_bias[1] /= nb_samples;
-        gyro_bias[2] /= nb_samples;
+        gyro_bias[0] = gyro_bias[0]/nb_samples/self.gyro_scale;
+        gyro_bias[1] = gyro_bias[1]/nb_samples/self.gyro_scale;
+        gyro_bias[2] = gyro_bias[2]/nb_samples/self.gyro_scale;
         print gyro_bias
 
         return (acc_bias, gyro_bias);
