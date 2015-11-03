@@ -245,13 +245,19 @@ class Mpu9150(Imu):
             gyro_bias[1] += self.__read_word(MPU9150_GYRO_YOUT_H, MPU9150_GYRO_YOUT_L);
             gyro_bias[2] += self.__read_word(MPU9150_GYRO_ZOUT_H, MPU9150_GYRO_ZOUT_L);
             
-        acc_bias[0] = acc_bias[0]/nb_samples/self.accel_scale;
-        acc_bias[1] = acc_bias[1]/nb_samples/self.accel_scale;
-        acc_bias[2] = acc_bias[2]/nb_samples/self.accel_scale;
+        acc_bias[0] = acc_bias[0]//nb_samples//self.accel_scale;
+        acc_bias[1] = acc_bias[1]//nb_samples//self.accel_scale;
+        acc_bias[2] = acc_bias[2]//nb_samples//self.accel_scale;
         
         gyro_bias[0] = gyro_bias[0]//nb_samples//self.gyro_scale;
         gyro_bias[1] = gyro_bias[1]//nb_samples//self.gyro_scale;
         gyro_bias[2] = gyro_bias[2]//nb_samples//self.gyro_scale;
+        
+        # remove gravity from accel Zero
+        if acc_bias[2] > 0:
+            acc_bias -= self.accel_scale;
+        else:
+            acc_bias += self.accel_scale;
 
         return (acc_bias, gyro_bias);
             
@@ -269,6 +275,32 @@ class Mpu9150(Imu):
 
         for i in range(0,6):
             self.dev.writeReg(0x13+i, data[i]);
+    
+    def __readAccBiasReg(self):
+        accel_reg_bias[0] = self.__read_word(0x06, 0x07);
+        accel_reg_bias[1] = self.__read_word(0x08, 0x09);
+        accel_reg_bias[2] = self.__read_word(0x0A, 0x0B);
+        return accel_reg_bias;
+    
+    def __setAccBiasReg(self, accel_bias):
+        data = [0, 0, 0, 0, 0, 0];
+        
+        accel_reg_bias = self.__readAccBiasReg();
+        
+        # Preserve bit 0 of factory value (for temperature compensation)
+        accel_reg_bias[0] -= (accel_bias[0] & ~1);
+        accel_reg_bias[1] -= (accel_bias[1] & ~1);
+        accel_reg_bias[2] -= (accel_bias[2] & ~1);
+        
+        data[0] = (accel_reg_bias[0] >> 8) & 0xff;
+        data[1] = (accel_reg_bias[0]) & 0xff;
+        data[2] = (accel_reg_bias[1] >> 8) & 0xff;
+        data[3] = (accel_reg_bias[1]) & 0xff;
+        data[4] = (accel_reg_bias[2] >> 8) & 0xff;
+        data[5] = (accel_reg_bias[2]) & 0xff;
+
+        for i in range(0,6):
+            self.dev.writeReg(0x06+i, data[i]);
     
     def __read_word(self, reg_h, reg_l):
         'Reads data from high & low registers and returns the combination'
