@@ -224,9 +224,9 @@ class Mpu9150(Imu):
             self.accel_scale = 16
             self.dev.writeReg(MPU9150_ACCEL_CONFIG, 0x18)
 
-	def __calibrate():
+	def calibrate():
 		(acc_bias, gyro_bias) = self.__getAccGyroBiases();
-		
+		self.__setGyroBiasReg(gyro_bias);
 		
 	def __getAccGyroBiases()
 		nb_samples = 10;
