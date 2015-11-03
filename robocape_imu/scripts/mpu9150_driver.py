@@ -2,6 +2,7 @@ from __future__ import division
 from imu import Imu
 import mraa
 import math
+import time
 
 ### MPU 9150 Register Map
 MPU9150_SELF_TEST_X        = 0x0D   # R/W
@@ -235,6 +236,7 @@ class Mpu9150(Imu):
         gyro_bias = [0, 0, 0];
 
         for i in range (1,nb_samples):
+            time.sleep(0.1);
             acc_bias[0] += self.__read_word(MPU9150_ACCEL_XOUT_H, MPU9150_ACCEL_XOUT_L);
             acc_bias[1] += self.__read_word(MPU9150_ACCEL_YOUT_H, MPU9150_ACCEL_YOUT_L);
             acc_bias[2] += self.__read_word(MPU9150_ACCEL_ZOUT_H, MPU9150_ACCEL_ZOUT_L);
@@ -247,25 +249,25 @@ class Mpu9150(Imu):
         acc_bias[1] = acc_bias[1]/nb_samples/self.accel_scale;
         acc_bias[2] = acc_bias[2]/nb_samples/self.accel_scale;
         
-        gyro_bias[0] = gyro_bias[0]/nb_samples/self.gyro_scale;
-        gyro_bias[1] = gyro_bias[1]/nb_samples/self.gyro_scale;
-        gyro_bias[2] = gyro_bias[2]/nb_samples/self.gyro_scale;
-        print gyro_bias
+        gyro_bias[0] = gyro_bias[0]//nb_samples//self.gyro_scale;
+        gyro_bias[1] = gyro_bias[1]//nb_samples//self.gyro_scale;
+        gyro_bias[2] = gyro_bias[2]//nb_samples//self.gyro_scale;
 
         return (acc_bias, gyro_bias);
             
     def __setGyroBiasReg(self, gyro_bias):
-        for i in range(0,2):
+        for i in range(0,3):
             gyro_bias[i] = -(gyro_bias[i]);
-            
+        
+        data = [0, 0, 0, 0, 0, 0];    
         data[0] = (gyro_bias[0] >> 8) & 0xff;
         data[1] = (gyro_bias[0]) & 0xff;
         data[2] = (gyro_bias[1] >> 8) & 0xff;
         data[3] = (gyro_bias[1]) & 0xff;
         data[4] = (gyro_bias[2] >> 8) & 0xff;
         data[5] = (gyro_bias[2]) & 0xff;
-        
-        for i in range(0,5):
+
+        for i in range(0,6):
             self.dev.writeReg(0x13+i, data[i]);
     
     def __read_word(self, reg_h, reg_l):
