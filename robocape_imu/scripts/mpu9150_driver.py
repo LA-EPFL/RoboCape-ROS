@@ -225,12 +225,15 @@ class Mpu9150(Imu):
             self.accel_scale = 16
             self.dev.writeReg(MPU9150_ACCEL_CONFIG, 0x18)
 
-    def calibrate():
+    def calibrate(self):
         (acc_bias, gyro_bias) = self.__getAccGyroBiases();
         self.__setGyroBiasReg(gyro_bias);
         
-    def __getAccGyroBiases():
+    def __getAccGyroBiases(self):
         nb_samples = 10;
+        acc_bias = [0, 0, 0];
+        gyro_bias = [0, 0, 0];
+
         for i in range (1,nb_samples):
             self.update();
             acc_bias[0] += self.accel[0];
@@ -241,17 +244,18 @@ class Mpu9150(Imu):
             gyro_bias[1] += self.gyro[1];
             gyro_bias[2] += self.gyro[2];
             
-        acc_bias[0] /= nb_samples;
+        acc_bias[0] //= nb_samples;
         acc_bias[1] /= nb_samples;
         acc_bias[2] /= nb_samples;
         
-        gyro_bias[0] /= nb_samples;
+        gyro_bias[0] //= nb_samples;
         gyro_bias[1] /= nb_samples;
         gyro_bias[2] /= nb_samples;
-        
+        print gyro_bias
+
         return (acc_bias, gyro_bias);
             
-    def __setGyroBiasReg(gyro_bias):
+    def __setGyroBiasReg(self, gyro_bias):
         for i in range(0,2):
             gyro_bias[i] = -(gyro_bias[i]);
             

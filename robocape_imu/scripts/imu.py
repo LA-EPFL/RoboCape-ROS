@@ -14,6 +14,6 @@ class Imu(object):
         'Update all sensors data'
         pass
 
-	def calibrate(self):
-		'Calibrate biases'
-		pass
+    def calibrate(self):
+        'Calibrate biases'
+        pass
