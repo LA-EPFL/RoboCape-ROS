@@ -229,6 +229,7 @@ class Mpu9150(Imu):
     def calibrate(self):
         (acc_bias, gyro_bias) = self.__getAccGyroBiases();
         self.__setGyroBiasReg(gyro_bias);
+        self.__setAccBiasReg(acc_bias);
         
     def __getAccGyroBiases(self):
         nb_samples = 10;
