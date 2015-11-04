@@ -2,6 +2,7 @@ from __future__ import division
 from imu import Imu
 import mraa
 import math
+import time
 
 ### MPU 9150 Register Map
 MPU9150_SELF_TEST_X        = 0x0D   # R/W
@@ -140,7 +141,7 @@ class Mpu9150(Imu):
         info += 'Compass heading vector (in uT):\n'
         info += 'x: {:.2f}, y: {:.2f}, z: {:.2f}\n'.format(self.compass[0], self.compass[1], self.compass[2])
         info += 'Temperature (in C): {:.2f}\n'.format(self.temp)
-	return info;
+        return info;
 
     def update(self):
         self.accel[0] = self.__read_word(MPU9150_ACCEL_XOUT_H, MPU9150_ACCEL_XOUT_L) / self.accel_scaling
@@ -225,6 +226,91 @@ class Mpu9150(Imu):
             self.accel_scale = 16
             self.dev.writeReg(MPU9150_ACCEL_CONFIG, 0x18)
 
+    def calibrate(self):
+        (acc_bias, gyro_bias) = self.__getAccGyroBiases();
+        self.__setGyroBiasReg(gyro_bias);
+        self.__setAccBiasReg(acc_bias);
+        
+    def __getAccGyroBiases(self):
+        nb_samples = 10;
+        acc_bias = [0, 0, 0];
+        gyro_bias = [0, 0, 0];
+
+        for i in range (1,nb_samples+1):
+            time.sleep(0.1);
+            acc_bias[0] += self.__read_word(MPU9150_ACCEL_XOUT_H, MPU9150_ACCEL_XOUT_L);
+            acc_bias[1] += self.__read_word(MPU9150_ACCEL_YOUT_H, MPU9150_ACCEL_YOUT_L);
+            acc_bias[2] += self.__read_word(MPU9150_ACCEL_ZOUT_H, MPU9150_ACCEL_ZOUT_L);
+            
+            gyro_bias[0] += self.__read_word(MPU9150_GYRO_XOUT_H, MPU9150_GYRO_XOUT_L);
+            gyro_bias[1] += self.__read_word(MPU9150_GYRO_YOUT_H, MPU9150_GYRO_YOUT_L);
+            gyro_bias[2] += self.__read_word(MPU9150_GYRO_ZOUT_H, MPU9150_GYRO_ZOUT_L);
+
+            
+        acc_bias[0] = acc_bias[0]//nb_samples//8;
+        acc_bias[1] = acc_bias[1]//nb_samples//8;
+        acc_bias[2] = acc_bias[2]//nb_samples//1;
+        
+        gyro_bias[0] = gyro_bias[0]//nb_samples//self.gyro_scale;
+        gyro_bias[1] = gyro_bias[1]//nb_samples//self.gyro_scale;
+        gyro_bias[2] = gyro_bias[2]//nb_samples//self.gyro_scale;
+        
+        # remove gravity from accel Zero
+        if acc_bias[2] > 0:
+            acc_bias[2] -= 16384;
+        else:
+            acc_bias[2] += 0;
+        
+        acc_bias[2] //= 8;
+        acc_bias[2] +=64;        
+        
+        return (acc_bias, gyro_bias);
+            
+    def __setGyroBiasReg(self, gyro_bias):
+        for i in range(0,3):
+            gyro_bias[i] = -(gyro_bias[i]);
+        
+        data = [0, 0, 0, 0, 0, 0];    
+        data[0] = (gyro_bias[0] >> 8) & 0xff;
+        data[1] = (gyro_bias[0]) & 0xff;
+        data[2] = (gyro_bias[1] >> 8) & 0xff;
+        data[3] = (gyro_bias[1]) & 0xff;
+        data[4] = (gyro_bias[2] >> 8) & 0xff;
+        data[5] = (gyro_bias[2]) & 0xff;
+
+        for i in range(0,6):
+            self.dev.writeReg(0x13+i, data[i]);
+    
+    def __readAccBiasReg(self):
+        accel_reg_bias = [0, 0, 0];
+        accel_reg_bias[0] = self.__read_two_reg(0x06, 0x07);
+        accel_reg_bias[1] = self.__read_two_reg(0x08, 0x09);
+        accel_reg_bias[2] = self.__read_two_reg(0x0A, 0x0B);
+
+        return accel_reg_bias;
+    
+    def __setAccBiasReg(self, accel_bias):
+        data = [0, 0, 0, 0, 0, 0];
+                
+        accel_reg_bias = self.__readAccBiasReg();
+        
+        # Preserve bit 0 of factory value (for temperature compensation)
+        accel_reg_bias[0] -= (accel_bias[0] & ~1);
+        accel_reg_bias[1] -= (accel_bias[1] & ~1);
+        accel_reg_bias[2] -= (accel_bias[2] & ~1);
+  
+        data[0] = (accel_reg_bias[0] >> 8) & 0xff;
+        data[1] = (accel_reg_bias[0]) & 0xff;
+        data[2] = (accel_reg_bias[1] >> 8) & 0xff;
+        data[3] = (accel_reg_bias[1]) & 0xff;
+        data[4] = (accel_reg_bias[2] >> 8) & 0xff;
+        data[5] = (accel_reg_bias[2]) & 0xff;
+      
+        for i in range(0,6):
+            self.dev.writeReg(0x06+i, data[i]);
+    
+        self.__readAccBiasReg();
+
     def __read_word(self, reg_h, reg_l):
         'Reads data from high & low registers and returns the combination'
         # Read register values
@@ -232,6 +318,14 @@ class Mpu9150(Imu):
         val_l = self.dev.readReg(reg_l)
 
         if val_h > 127:
-            return (((val_h - 256) << 8) - val_l)
+            return (((val_h << 8) + val_l) - 65536)
         else:
             return ((val_h << 8) + val_l)
+
+    def __read_two_reg(self, reg_h, reg_l):
+        'Reads data from high & low registers and returns the combination'
+        # Read register values
+        val_h = self.dev.readReg(reg_h)
+        val_l = self.dev.readReg(reg_l)
+	return ((val_h << 8) + val_l)
+
