@@ -245,7 +245,7 @@ class Mpu9150(Imu):
             gyro_bias[0] += self.__read_word(MPU9150_GYRO_XOUT_H, MPU9150_GYRO_XOUT_L);
             gyro_bias[1] += self.__read_word(MPU9150_GYRO_YOUT_H, MPU9150_GYRO_YOUT_L);
             gyro_bias[2] += self.__read_word(MPU9150_GYRO_ZOUT_H, MPU9150_GYRO_ZOUT_L);
-            print acc_bias
+
             
         acc_bias[0] = acc_bias[0]//nb_samples//8;
         acc_bias[1] = acc_bias[1]//nb_samples//8;
@@ -263,9 +263,7 @@ class Mpu9150(Imu):
         
         acc_bias[2] //= 8;
         acc_bias[2] +=64;        
-        print "Accelerometer estimated bias"
-        print acc_bias
-
+        
         return (acc_bias, gyro_bias);
             
     def __setGyroBiasReg(self, gyro_bias):
@@ -287,18 +285,13 @@ class Mpu9150(Imu):
         accel_reg_bias = [0, 0, 0];
         accel_reg_bias[0] = self.__read_two_reg(0x06, 0x07);
         accel_reg_bias[1] = self.__read_two_reg(0x08, 0x09);
-        accel_reg_bias[2] = self.__read_word(0x0A, 0x0B);
-        print "Register bisases:"
-        print accel_reg_bias;
+        accel_reg_bias[2] = self.__read_two_reg(0x0A, 0x0B);
 
         return accel_reg_bias;
     
     def __setAccBiasReg(self, accel_bias):
         data = [0, 0, 0, 0, 0, 0];
-        
-        print "Accel_bias :" 
-        print accel_bias
-        
+                
         accel_reg_bias = self.__readAccBiasReg();
         
         # Preserve bit 0 of factory value (for temperature compensation)
@@ -306,9 +299,6 @@ class Mpu9150(Imu):
         accel_reg_bias[1] -= (accel_bias[1] & ~1);
         accel_reg_bias[2] -= (accel_bias[2] & ~1);
   
-        print "Modified reg"
-        print accel_reg_bias
-        
         data[0] = (accel_reg_bias[0] >> 8) & 0xff;
         data[1] = (accel_reg_bias[0]) & 0xff;
         data[2] = (accel_reg_bias[1] >> 8) & 0xff;
@@ -316,8 +306,6 @@ class Mpu9150(Imu):
         data[4] = (accel_reg_bias[2] >> 8) & 0xff;
         data[5] = (accel_reg_bias[2]) & 0xff;
       
-        print "Data"
-        print data
         for i in range(0,6):
             self.dev.writeReg(0x06+i, data[i]);
     
