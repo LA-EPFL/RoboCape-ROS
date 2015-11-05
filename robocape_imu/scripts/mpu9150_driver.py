@@ -310,7 +310,56 @@ class Mpu9150(Imu):
             self.dev.writeReg(0x06+i, data[i]);
     
         self.__readAccBiasReg();
+        
+    def magCalibration(self)
+        mag_max = [-32768, -32768, -32768];
+        max_min = [32767, 32767, 32767];
+        mag_temp = [0.0, 0.0, 0.0];
+        mag_bias_s = [0, 0, 0];     # Magnetometer bias scaled
+        mag_scale_s = [0, 0, 0];    # Magnetometer scale normalized
+        
+        print "Magnetometer calibration"
+        print "Turn the IMU in random positions"
+        sample_count = 128;
+        for i int range(0, sample_count+1):
+            mag_temp[0] = self.__read_word(MPU9150_CMPS_XOUT_H, MPU9150_CMPS_XOUT_L);
+            mag_temp[1] = self.__read_word(MPU9150_CMPS_YOUT_H, MPU9150_CMPS_YOUT_L);
+            max_temp[2] = self.__read_word(MPU9150_CMPS_ZOUT_H, MPU9150_CMPS_ZOUT_L);
+            for j in range(0,3+1):
+                if mag_temp[j] > mag_max[j]:
+                    max_max[j] = mag_temp[j];
+                if mag_temp[j] < mag_min[j]:
+                    mag_min[j] = mag_temp[j];
+                    
+            time.sleep(0.135);
+            
+        # Hard iron correction
+        mag_bias[0]  = (mag_max[0] + mag_min[0])/2;  # get average x mag bias in counts
+        mag_bias[1]  = (mag_max[1] + mag_min[1])/2;  # get average y mag bias in counts
+        mag_bias[2]  = (mag_max[2] + mag_min[2])/2;  # get average z mag bias in counts
 
+        mag_bias_s[0] = mag_bias[0]/self.compass_scaling;
+        mag_bias_s[1] = mag_bias[1]/self.compass_scaling;
+        mag_bias_s[2] = mag_bias[2]/self.compass_scaling;
+        
+        # Get soft iron correction estimate
+        mag_scale[0]  = (mag_max[0] - mag_min[0])/2;  # get average x axis max chord length in counts
+        mag_scale[1]  = (mag_max[1] - mag_min[1])/2;  # get average y axis max chord length in counts
+        mag_scale[2]  = (mag_max[2] - mag_min[2])/2;  # get average z axis max chord length in counts
+
+        float avg_rad = mag_scale[0] + mag_scale[1] + mag_scale[2];
+        avg_rad /= 3.0;
+
+        mag_scale_n[0] = avg_rad/((float)mag_scale[0]);
+        mag_scale_n[1] = avg_rad/((float)mag_scale[1]);
+        mag_scale_n[2] = avg_rad/((float)mag_scale[2]);
+        
+        print "Calibration done"
+        print mag_bias_s
+        print mag_scale_n
+        
+        return (mag_bias_s, mag_scale_n);
+        
     def __read_word(self, reg_h, reg_l):
         'Reads data from high & low registers and returns the combination'
         # Read register values

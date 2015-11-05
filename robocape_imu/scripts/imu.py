@@ -17,3 +17,7 @@ class Imu(object):
     def calibrate(self):
         'Calibrate biases'
         pass
+        
+    def magCalibration(self):
+        'Returns magnetometer offsets and scaling error'
+        pass
