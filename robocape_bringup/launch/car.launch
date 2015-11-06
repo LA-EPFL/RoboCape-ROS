@@ -34,6 +34,13 @@
   />
 
   <!-- Sensor nodes -->
+  <node name="imu_raw_publisher"
+        pkg="robocape_imu"
+        type="imu_pub.py"
+        ns="car"
+        respawn="true"
+  />
+
   <node name="nmea_serial_driver"
         pkg="nmea_navsat_driver"
         type="nmea_serial_driver"

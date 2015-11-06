@@ -322,6 +322,9 @@ class Mpu9150(Imu):
         
         print "Magnetometer calibration"
         print "Turn the IMU in random positions"
+        led = mraa.Gpio(18)
+        led.dir(mraa.DIR_OUT);
+        led.write(1);
         sample_count = 128;
         for i in range(0, sample_count):
             mag_temp[0] = self.__read_word(MPU9150_CMPS_XOUT_H, MPU9150_CMPS_XOUT_L);
@@ -359,6 +362,7 @@ class Mpu9150(Imu):
         print "Calibration done"
         print mag_bias_s
         print mag_scale_n
+        led.write(0);
         
         return (mag_bias_s, mag_scale_n);
         

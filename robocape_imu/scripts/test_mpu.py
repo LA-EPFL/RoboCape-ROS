@@ -7,8 +7,8 @@ imu.calibrate();
 
 while True:
 	imu.update();
-        imu.compass[0] -= mag_offset[0];
-        imu.compass[1] -= mag_offset[1];
-        imu.compass[2] -= mag_offset[2];
+        imu.compass[0] += mag_offset[0];
+        imu.compass[1] += mag_offset[1];
+        imu.compass[2] += mag_offset[2];
 	print imu.raw_data();
 	time.sleep(0.2);

@@ -5,6 +5,8 @@ class Imu(object):
         self.compass = [0.0, 0.0, 0.0]
         self.pressure = 0.0
         self.temp = 0.0
+        self.mag_offset = [0.0, 0.0, 0.0];
+        self.mag_scale = [0.0, 0.0, 0.0];
 
     def raw_data(self):
         'Return a string containing raw data readings'
