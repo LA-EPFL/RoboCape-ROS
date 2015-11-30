@@ -153,7 +153,7 @@ class Mpu9150(Imu):
         self.gyro[2] = self.__read_word(MPU9150_GYRO_ZOUT_H, MPU9150_GYRO_ZOUT_L) / self.gyro_scaling
 
         self.compass[0] = self.__read_word(MPU9150_CMPS_XOUT_H, MPU9150_CMPS_XOUT_L) / self.compass_scaling
-        self.compass[1] = self.__read_word(MPU9150_CMPS_YOUT_H, MPU9150_CMPS_YOUT_L) / self.compass_scaling
+        self.compass[1] = -self.__read_word(MPU9150_CMPS_YOUT_H, MPU9150_CMPS_YOUT_L) / self.compass_scaling
         self.compass[2] = self.__read_word(MPU9150_CMPS_ZOUT_H, MPU9150_CMPS_ZOUT_L) / self.compass_scaling
 
         self.temp = self.__read_word(MPU9150_TEMP_OUT_H, MPU9150_TEMP_OUT_L) / 340.0 + 35
@@ -355,9 +355,14 @@ class Mpu9150(Imu):
         avg_rad = mag_scale[0] + mag_scale[1] + mag_scale[2];
         avg_rad /= 3.0;
 
-        mag_scale_n[0] = avg_rad/mag_scale[0];
-        mag_scale_n[1] = avg_rad/mag_scale[1];
-        mag_scale_n[2] = avg_rad/mag_scale[2];
+        if mag_scale[0] != 0:
+            mag_scale_n[0] = avg_rad/mag_scale[0];
+       
+        if mag_scale[1] != 0: 
+       	    mag_scale_n[1] = avg_rad/mag_scale[1];
+        
+        if mag_scale[2] != 0:
+            mag_scale_n[2] = avg_rad/mag_scale[2];
         
         print "Calibration done"
         print mag_bias_s

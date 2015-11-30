@@ -19,10 +19,14 @@ class ImuHandler:
         acc_scale = int(rospy.get_param('imu/accelerometer/scale', 2));
 
         self.imu = Mpu9150(address, gyro_scale, acc_scale);
+        
         self.imu.calibrate();
         rospy.loginfo("Compass calibration; move the imu in random positions during the calibration");
         (self.mag_offset, self.mag_scale) = self.imu.magCalibration();
         rospy.loginfo("Calibration done");
+        #self.mag_offset[0] = 0;
+        #self.mag_offset[1] = 0;
+        #self.mag_offset[2] = 0;
 
     def publish(self):
         queue_size = rospy.get_param('imu/queue', 1);
@@ -86,7 +90,7 @@ class ImuHandler:
         self.msg_imu.orientation.w = 0;
 
         self.msg_mag.magnetic_field.x = self.imu.compass[0] - self.mag_offset[0];
-        self.msg_mag.magnetic_field.y = self.imu.compass[1] - self.mag_offset[1];
+        self.msg_mag.magnetic_field.y = self.imu.compass[1] + self.mag_offset[1];
         self.msg_mag.magnetic_field.z = self.imu.compass[2] - self.mag_offset[2];
 
 if __name__ == '__main__':
