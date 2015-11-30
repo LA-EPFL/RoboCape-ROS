@@ -43,12 +43,7 @@
 
   <node name="ublox_cfg"
         pkg="robocape_ublox"
-        type="configure.py"
-        ns="car"
-        respawn="true">
-    <param name="port" value="/dev/ttyO4"/>
-    <param name="baud" value="9600"/>
-    <param name="frame_id" value="robocape"/>
+        type="configure.py">
   </node>
 
   <node name="nmea_serial_driver"
