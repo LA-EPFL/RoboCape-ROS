@@ -52,7 +52,7 @@
         ns="car"
         respawn="true">
     <param name="port" value="/dev/ttyO4"/>
-    <param name="baud" value="9600"/>
+    <param name="baud" value="203400"/>
     <param name="frame_id" value="robocape"/>
     <param name="useRMC" value="true"/>
   </node>
